@@ -100,7 +100,12 @@ class HelpDeskGUI:
             messagebox.showerror("Erro", "Preencha tudo")
             return
 
-        self.sistema.cadastrar(Cliente(u, s, e, tel))
+        r = self.sistema.cadastrar(Cliente(u, s, e, tel))
+
+        if r is not True:
+            messagebox.showerror("Erro", r)
+            return
+
         messagebox.showinfo("OK", "Cliente criado")
 
     def cadastrar_tecnico(self):
@@ -110,7 +115,16 @@ class HelpDeskGUI:
         e = simpledialog.askstring("Email", "Email", parent=self.root)
         esp = simpledialog.askstring("Especialidade", "Especialidade", parent=self.root)
 
-        self.sistema.cadastrar(Tecnico(u, s, e, esp))
+        if not u or not s or not e:
+            messagebox.showerror("Erro", "Preencha tudo")
+            return
+
+        r = self.sistema.cadastrar(Tecnico(u, s, e, esp))
+
+        if r is not True:
+            messagebox.showerror("Erro", r)
+            return
+
         messagebox.showinfo("OK", "Técnico criado")
 
     def login(self):
@@ -133,6 +147,9 @@ class HelpDeskGUI:
     def abrir_ticket(self):
 
         d = simpledialog.askstring("Ticket", "Descrição", parent=self.root)
+
+        if d is None:  # usuário clicou em Cancelar
+            return
 
         r = self.sistema.gerenciar_abertura(d)
 

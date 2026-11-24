@@ -43,6 +43,9 @@ class SistemaHelpDesk:
         if not self.usuario_logado:
             return "Faça login primeiro"
 
+        if not descricao or not descricao.strip():
+            return "Descreva o problema"
+
         ticket_id = len(self.tickets) + 1
 
         ticket = Ticket(
@@ -61,11 +64,17 @@ class SistemaHelpDesk:
 
     def atribuir_ticket(self, id_ticket, tecnico_nome):
 
+        if not self.usuario_logado:
+            return "Faça login primeiro"
+
         ticket = next((t for t in self.tickets if t.id == id_ticket), None)
         tecnico = self.usuarios.get(tecnico_nome)
 
         if not ticket or not isinstance(tecnico, Tecnico):
             return "Ticket ou técnico não encontrado"
+
+        if ticket.status == "concluído":
+            return "Ticket já foi concluído"
 
         ticket.tecnico = tecnico.user
         ticket.atualizar_status("em atendimento")
@@ -81,6 +90,9 @@ class SistemaHelpDesk:
 
         if not isinstance(self.usuario_logado, Tecnico):
             return "Apenas técnico pode resolver"
+
+        if ticket.status == "concluído":
+            return "Ticket já foi concluído"
 
         ticket.atualizar_status("concluído")
         ticket.tecnico = self.usuario_logado.user
